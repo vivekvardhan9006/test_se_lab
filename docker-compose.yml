@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  food-system:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: food-system-app
+    ports:
+      - "8080:8080"
+    environment:
+      - TZ=UTC
+      - JAVA_OPTS=-Xmx512m -Xms256m
+    restart: unless-stopped
+    networks:
+      - food-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/FoodSystem/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    labels:
+      - "com.food.app=restaurant-system"
+      - "com.food.version=1.0.0"
+      - "com.food.description=Restaurant Management System"
+
+networks:
+  food-network:
+    driver: bridge
+    name: food-management-network
+
+volumes:
+  tomcat-logs:
+    driver: local
